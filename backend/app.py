@@ -13,10 +13,11 @@ app_name = os.getenv("APP_NAME")
 app = FastAPI(title="Aayushmaan Personal Agent")
 
 origins = [
-    "https://aayush-bot-tf6k.vercel.app/",
+    "https://aayush-bot-tf6k.vercel.app",
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:3000",
+    "*",  # Allow all origins for testing - remove in production
 ]
 
 app.add_middleware(
