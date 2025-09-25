@@ -1,5 +1,6 @@
 // API configuration and chat endpoint
-const API_BASE_URL = 'http://localhost:8000';
+// const API_BASE_URL = ['http://localhost:8000', 'https://aayushbot-1.onrender.com'];
+const API_BASE_URL = 'https://aayushbot-1.onrender.com';
 
 /**
  * Send a chat message to the backend
