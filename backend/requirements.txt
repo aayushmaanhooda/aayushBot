@@ -1,0 +1,28 @@
+# --- Core agent stack ---
+langgraph
+langchain
+langchain-openai
+
+# --- MongoDB-based RAG (Atlas Vector Search) ---
+langchain-mongodb==0.7.0
+pymongo==4.15.1
+
+
+# --- “Web search” tool (Tavily API) ---
+tavily-python
+
+# --- GitHub tool (official SDK) ---
+PyGithub
+
+# --- Email tool (async SMTP client; you can also use stdlib smtplib) ---
+aiosmtplib
+
+# --- Service / API server ---
+fastapi
+uvicorn
+
+# --- Config / env ---
+python-dotenv
+
+# --- Utilities ---
+requests
