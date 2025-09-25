@@ -4,7 +4,7 @@ langchain
 langchain-openai
 
 # --- MongoDB-based RAG (Atlas Vector Search) ---
-langchain-mongodb==0.7.0
+langchain-mongodb
 pymongo==4.15.1
 
 
@@ -12,10 +12,9 @@ pymongo==4.15.1
 tavily-python
 
 # --- GitHub tool (official SDK) ---
-PyGithub
 
 # --- Email tool (async SMTP client; you can also use stdlib smtplib) ---
-aiosmtplib
+
 
 # --- Service / API server ---
 fastapi
