@@ -86,7 +86,7 @@ def rebuild_vector_store():
     data = loader.load()
 
     # Split PDF into documents
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=20)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=30)
     docs = text_splitter.split_documents(data)
 
     # Clear existing documents and add new ones
