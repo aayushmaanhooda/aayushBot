@@ -1,13 +1,20 @@
 # FAST API ENDPOINT SERVING OUTPUT
 
 import os
+import sys
+from pathlib import Path
 from fastapi import FastAPI
 from pydantic import BaseModel
 from langchain_core.messages import HumanMessage
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from .graph import agent
 import uuid
+
+# Add the current directory to Python path for imports
+current_dir = Path(__file__).parent
+sys.path.insert(0, str(current_dir))
+
+from graph import agent
 
 load_dotenv()
 

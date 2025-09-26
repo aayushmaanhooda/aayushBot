@@ -1,6 +1,7 @@
 # rag.py
 
 import os, pymongo, pprint, sys
+
 # Add the backend directory to the Python path
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, backend_dir)
@@ -20,7 +21,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
-from .prompt import system_prompt
+from tools.prompt import system_prompt
 
 load_dotenv()
 
