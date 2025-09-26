@@ -76,13 +76,26 @@ graph.add_edge("tools", "agent")
 agent = graph.compile(checkpointer=memory)
 
 if __name__ == "__main__":
-    print("Agent skeleton. Functions are stubs (pass).")
-    out = agent.invoke(
+    print("=== Testing RAG Tool ===")
+    out1 = agent.invoke(
         {
             "messages": [
                 system_prompt,
-                HumanMessage(content="when was he born?"),
+                HumanMessage(content="what is your nickname?"),
             ]
-        }
+        },
+        config={"configurable": {"thread_id": "test-thread-1"}},
     )
-    print(out["messages"][-1].content)
+    print("RAG Result:", out1["messages"][-1].content)
+
+    print("\n=== Testing Web Search Tool ===")
+    out2 = agent.invoke(
+        {
+            "messages": [
+                system_prompt,
+                HumanMessage(content="what is today's date?"),
+            ]
+        },
+        config={"configurable": {"thread_id": "test-thread-2"}},
+    )
+    print("Web Search Result:", out2["messages"][-1].content)

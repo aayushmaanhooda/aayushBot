@@ -8,6 +8,11 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [sessionId, setSessionId] = useState(null);
+  const [backendStatus, setBackendStatus] = useState({
+    status: "checking",
+    message: "Checking backend...",
+    responseTime: null,
+  });
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -22,9 +27,52 @@ function App() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const testBackendConnection = async () => {
+    try {
+      const startTime = Date.now();
+      const response = await fetch("http://localhost:8000/healthz", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const endTime = Date.now();
+      const responseTime = endTime - startTime;
+
+      if (response.ok) {
+        return {
+          status: "online",
+          message: "Backend is online",
+          responseTime: responseTime,
+        };
+      } else {
+        return {
+          status: "offline",
+          message: "Backend is not responding",
+          responseTime: null,
+        };
+      }
+    } catch (error) {
+      return {
+        status: "offline",
+        message: "Backend is not responding",
+        responseTime: null,
+      };
+    }
+  };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    // Check backend status on component mount
+    const checkBackend = async () => {
+      const result = await testBackendConnection();
+      setBackendStatus(result);
+    };
+    checkBackend();
+  }, []);
 
   useEffect(() => {
     // Stream the welcome message
@@ -87,9 +135,18 @@ function App() {
 
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
+      // Update backend status on error
+      setBackendStatus({
+        status: "offline",
+        message: "Backend is not responding",
+      });
+
       const errorMessage = {
         id: Date.now() + 1,
-        text: `Sorry, I encountered an error: ${error.message}. Make sure the backend is running.`,
+        text:
+          backendStatus.status === "offline"
+            ? `🔴 Backend is currently down. Please try again later or contact support.`
+            : `Sorry, I encountered an error: ${error.message}. Please try again.`,
         sender: "bot",
         timestamp: new Date(),
         isError: true,
@@ -129,9 +186,48 @@ function App() {
                 Aayushmaan Bot
               </h1>
               <p className="text-gray-700 text-xs sm:text-sm">
-                When I’m away, I’m still here.
+                When I'm away, I'm still here.
               </p>
             </div>
+
+            {/* Backend Status Indicator */}
+            <button
+              onClick={async () => {
+                setBackendStatus({
+                  status: "checking",
+                  message: "Checking backend...",
+                });
+                const result = await testBackendConnection();
+                setBackendStatus(result);
+              }}
+              className="flex items-center space-x-2 ml-2 hover:bg-gray-100/50 rounded-lg px-2 py-1 transition-colors"
+              title="Click to refresh backend status"
+            >
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  backendStatus.status === "online"
+                    ? "bg-green-500 animate-pulse"
+                    : backendStatus.status === "offline"
+                    ? "bg-red-500"
+                    : "bg-yellow-500 animate-pulse"
+                }`}
+              ></div>
+              <span
+                className={`text-xs hidden sm:block ${
+                  backendStatus.status === "online"
+                    ? "text-green-600"
+                    : backendStatus.status === "offline"
+                    ? "text-red-600"
+                    : "text-yellow-600"
+                }`}
+              >
+                {backendStatus.status === "online"
+                  ? `Online (${backendStatus.responseTime}ms)`
+                  : backendStatus.status === "offline"
+                  ? "Backend Down"
+                  : "Checking..."}
+              </span>
+            </button>
           </div>
 
           {/* Right side - Menu */}
