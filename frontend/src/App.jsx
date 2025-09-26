@@ -77,7 +77,7 @@ function App() {
   useEffect(() => {
     // Stream the welcome message
     const welcomeText =
-      "Hi! I’m Aayushmaan Bot 👋 Spoiler alert: my first reply might be slow (free-tier backend vibes 😅). But once I wake up, we can chat non-stop!";
+      "Hi! I’m Aayushmaan Bot!👋 What do you want to know about me?, and Spoiler alert: my first reply might be slow (free-tier backend vibes 😅). But once I wake up, we can chat non-stop!";
     let currentText = "";
     let index = 0;
 
