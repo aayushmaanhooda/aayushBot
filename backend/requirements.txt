@@ -2,16 +2,20 @@
 langgraph
 langchain
 langchain-openai
+langchain-community
+langchain-core 
+langchain-mongodb 
+langchain-voyageai 
+pymongo 
+pypdf
 
-# --- MongoDB-based RAG (Atlas Vector Search) ---
-langchain-mongodb
-pymongo==4.15.1
 
 
 # --- “Web search” tool (Tavily API) ---
-tavily-python
+langchain-tavily
 
 # --- GitHub tool (official SDK) ---
+pygithub
 
 # --- Email tool (async SMTP client; you can also use stdlib smtplib) ---
 

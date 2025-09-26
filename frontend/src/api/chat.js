@@ -6,18 +6,22 @@ const API_BASE_URL = import.meta.env.PROD
 /**
  * Send a chat message to the backend
  * @param {string} message - The message to send
+ * @param {string} sessionId - Optional session ID for conversation continuity
  * @returns {Promise<Object>} - The response from the backend
  */
-export const sendChatMessage = async (message) => {
+export const sendChatMessage = async (message, sessionId = null) => {
     try {
+        const requestBody = { message: message };
+        if (sessionId) {
+            requestBody.session_id = sessionId;
+        }
+
         const response = await fetch(`${API_BASE_URL}/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                message: message
-            })
+            body: JSON.stringify(requestBody)
         });
 
         if (!response.ok) {
