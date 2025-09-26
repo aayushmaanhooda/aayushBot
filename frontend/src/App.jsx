@@ -30,7 +30,11 @@ function App() {
   const testBackendConnection = async () => {
     try {
       const startTime = Date.now();
-      const response = await fetch("http://localhost:8000/healthz", {
+      const API_BASE_URL = import.meta.env.PROD
+        ? "https://aayushbot-1.onrender.com" // Production backend
+        : "http://localhost:8000"; // Development backend
+
+      const response = await fetch(`${API_BASE_URL}/healthz`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
