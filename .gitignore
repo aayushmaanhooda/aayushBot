@@ -6,3 +6,4 @@ bot_env
 bot_env/
 backend/__pycache__
 backend/tools/__pycache__
+feature.txt
