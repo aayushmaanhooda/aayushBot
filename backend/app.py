@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from langchain_core.messages import HumanMessage
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from graph import agent
+from .graph import agent
 import uuid
 
 load_dotenv()
