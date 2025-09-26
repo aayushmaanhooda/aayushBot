@@ -118,7 +118,7 @@ function App() {
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/40 to-purple-400/40 rounded-full blur-sm animate-pulse"></div>
               <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-white/60">
                 <img
-                  src="./src/profile.png"
+                  src="/profile.png"
                   alt="Aayushmaan Profile"
                   className="w-full h-full object-cover"
                 />
@@ -341,7 +341,7 @@ function App() {
                         <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/30 to-cyan-400/30 rounded-full blur-sm animate-pulse"></div>
                         <div className="relative w-6 h-6 sm:w-8 sm:h-8 rounded-full flex-shrink-0 overflow-hidden border-2 border-white/50">
                           <img
-                            src="./src/profile.png"
+                            src="/profile.png"
                             alt="Aayushmaan Profile"
                             className="w-full h-full object-cover"
                           />
@@ -379,7 +379,7 @@ function App() {
                     <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/30 to-cyan-400/30 rounded-full blur-sm animate-pulse"></div>
                     <div className="relative w-6 h-6 sm:w-8 sm:h-8 rounded-full flex-shrink-0 overflow-hidden border-2 border-white/50">
                       <img
-                        src="./src/profile.png"
+                        src="/profile.png"
                         alt="Aayushmaan Profile"
                         className="w-full h-full object-cover"
                       />
