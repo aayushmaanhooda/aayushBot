@@ -24,13 +24,12 @@ export const sendChatMessage = async (message, sessionId = null) => {
             body: JSON.stringify(requestBody)
         });
 
-        console.log("Backend data", body)
-
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
+        console.log("Backend data", data);
         return data;
     } catch (error) {
         console.error('Error sending chat message:', error);
