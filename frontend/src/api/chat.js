@@ -24,6 +24,8 @@ export const sendChatMessage = async (message, sessionId = null) => {
             body: JSON.stringify(requestBody)
         });
 
+        console.log("Backend data", body)
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
