@@ -93,7 +93,7 @@ if __name__ == "__main__":
         {
             "messages": [
                 system_prompt,
-                HumanMessage(content="what is today's date?"),
+                HumanMessage(content="what are his skills?"),
             ]
         },
         config={"configurable": {"thread_id": "test-thread-2"}},

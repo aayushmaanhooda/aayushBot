@@ -155,8 +155,10 @@ print("rag chain", rag_chain)
 @tool("rag_tool", return_direct=False)
 def rag_tool(query: str) -> str:
     """
-    Answer questions using my Aayushmaan life's knowledge base (MongoDB + vectors).
-    Returns an answer with short citations.
+   Search Aayushmaan’s private knowledge base (MongoDB + vector embeddings)"
+    "to answer questions specifically about **Aayushmaan** — his bio, education "
+    "(UNSW), projects, skills, resume details, links, his life"
+    "and personal preferences. Return a concise answer with inline citations. "
     """
     result = rag_chain.invoke({"input": query})
     answer = result.get("answer", "")
