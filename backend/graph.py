@@ -17,6 +17,13 @@ from tools.prompt import system_prompt
 
 load_dotenv()
 
+# utility tools 
+@tool
+def now_tool(tz: str = "Australia/Sydney") -> str:
+    """Return the current local date/time."""
+    return datetime.now(ZoneInfo(tz)).strftime("%Y-%m-%d %H:%M:%S %Z")
+
+
 memory = InMemorySaver()
 llm = init_chat_model("openai:gpt-4o")
 
@@ -25,7 +32,7 @@ class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
 
 
-TOOLS = [web_search_tool, rag_tool]
+TOOLS = [web_search_tool, rag_tool, now_tool]
 tool_node = ToolNode(TOOLS)
 
 
