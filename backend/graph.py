@@ -13,6 +13,7 @@ from langchain_core.messages import HumanMessage
 from tools.web import web_search_tool
 from tools.rag import rag_tool
 from tools.prompt import system_prompt
+from langchain_core.tools import tool
 
 
 load_dotenv()

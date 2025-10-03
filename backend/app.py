@@ -41,7 +41,7 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     message: str
-    session_id: str = None  # Optional session ID
+    session_id: str = None 
 
 
 class ChatResponse(BaseModel):
