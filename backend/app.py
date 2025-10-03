@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from langchain_core.messages import HumanMessage
 from fastapi.middleware.cors import CORSMiddleware
+from langgraph.checkpoint.memory import InMemorySaver
 from dotenv import load_dotenv
 import uuid
 
@@ -14,12 +15,13 @@ import uuid
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-from graph import agent
+from graph import graph
 
 load_dotenv()
 
 app_name = os.getenv("APP_NAME")
 app = FastAPI(title="Aayushmaan Personal Agent")
+memory = InMemorySaver()
 
 origins = [
     "https://aayush-bot-tf6k.vercel.app",
@@ -57,6 +59,8 @@ async def healthz():
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
+        #  compile the graph 
+        agent = graph.compile(checkpointer=memory)
         # Generate or use existing session ID
         session_id = request.session_id or str(uuid.uuid4())
 

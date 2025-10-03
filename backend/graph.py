@@ -1,12 +1,14 @@
 # LANGGRAPH FLOW
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from typing import Annotated, TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langchain.chat_models import init_chat_model
 from dotenv import load_dotenv
-from langgraph.checkpoint.memory import InMemorySaver
+
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.types import Command, interrupt
 from langchain_core.messages import HumanMessage
@@ -18,14 +20,17 @@ from langchain_core.tools import tool
 
 load_dotenv()
 
-# utility tools 
+
+# utility tools
 @tool
 def now_tool(tz: str = "Australia/Sydney") -> str:
-    """Return the current local date/time."""
+    """
+    Use this tool to return current dat eand time to the user
+    Return the current local date/time.
+    """
     return datetime.now(ZoneInfo(tz)).strftime("%Y-%m-%d %H:%M:%S %Z")
 
 
-memory = InMemorySaver()
 llm = init_chat_model("openai:gpt-4o")
 
 
@@ -81,7 +86,7 @@ graph.add_node("tools", debug_tool_node)
 graph.set_entry_point("agent")
 graph.add_conditional_edges("agent", tools_condition)
 graph.add_edge("tools", "agent")
-agent = graph.compile(checkpointer=memory)
+
 
 if __name__ == "__main__":
     print("=== Testing RAG Tool ===")
