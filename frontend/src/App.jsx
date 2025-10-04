@@ -13,6 +13,9 @@ function App() {
     message: "Checking backend...",
     responseTime: null,
   });
+  const [showWaitingGame, setShowWaitingGame] = useState(false);
+  const [waitTime, setWaitTime] = useState(0);
+  const [waitInterval, setWaitInterval] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -74,39 +77,92 @@ function App() {
     const checkBackend = async () => {
       const result = await testBackendConnection();
       setBackendStatus(result);
+
+      // If backend is offline, show waiting timer
+      if (result.status === "offline") {
+        setShowWaitingGame(true);
+        startWaitingTimer();
+      }
     };
     checkBackend();
   }, []);
 
+  // Timer functions
+  const startWaitingTimer = () => {
+    setWaitTime(0);
+
+    const interval = setInterval(() => {
+      setWaitTime((prev) => prev + 1);
+    }, 1000);
+    setWaitInterval(interval);
+  };
+
+  const stopWaitingTimer = () => {
+    if (waitInterval) {
+      clearInterval(waitInterval);
+      setWaitInterval(null);
+    }
+  };
+
+  // Check backend status periodically during waiting
   useEffect(() => {
-    // Stream the welcome message
-    const welcomeText =
-      "Hi! I’m Aayushmaan Bot!👋 What do you want to know about me? Spoiler alert: my first reply might be slow (free-tier backend vibes 😅). But once I wake up, we can chat non-stop!";
-    let currentText = "";
-    let index = 0;
+    if (showWaitingGame) {
+      const checkInterval = setInterval(async () => {
+        const result = await testBackendConnection();
+        setBackendStatus(result);
 
-    const streamWelcome = () => {
-      if (index < welcomeText.length) {
-        currentText += welcomeText[index];
-        setMessages([
-          {
-            id: 1,
-            text: currentText,
-            sender: "bot",
-            timestamp: new Date(),
-          },
-        ]);
-        index++;
-        setTimeout(streamWelcome, 50); // Typing speed
-      } else {
-        setShowWelcome(false);
-        // Focus input after welcome message is complete
-        setTimeout(() => inputRef.current?.focus(), 500);
-      }
-    };
+        if (result.status === "online") {
+          stopWaitingTimer();
+          setShowWaitingGame(false);
+          // Show success message
+          setMessages([
+            {
+              id: Date.now(),
+              text: `🎉 Backend is up! It took ${waitTime} seconds to wake up. Let's chat!`,
+              sender: "bot",
+              timestamp: new Date(),
+            },
+          ]);
+          setShowWelcome(false);
+          setTimeout(() => inputRef.current?.focus(), 500);
+        }
+      }, 2000); // Check every 2 seconds
 
-    setTimeout(streamWelcome, 1000); // Delay before starting
-  }, []);
+      return () => clearInterval(checkInterval);
+    }
+  }, [showWaitingGame, waitTime]);
+
+  useEffect(() => {
+    // Only stream welcome message if not showing waiting game
+    if (!showWaitingGame) {
+      const welcomeText =
+        "Hi! I'm Aayushmaan Bot!👋 What do you want to know about me? Spoiler alert: my first reply might be slow (free-tier backend vibes 😅). But once I wake up, we can chat non-stop!";
+      let currentText = "";
+      let index = 0;
+
+      const streamWelcome = () => {
+        if (index < welcomeText.length) {
+          currentText += welcomeText[index];
+          setMessages([
+            {
+              id: 1,
+              text: currentText,
+              sender: "bot",
+              timestamp: new Date(),
+            },
+          ]);
+          index++;
+          setTimeout(streamWelcome, 50); // Typing speed
+        } else {
+          setShowWelcome(false);
+          // Focus input after welcome message is complete
+          setTimeout(() => inputRef.current?.focus(), 500);
+        }
+      };
+
+      setTimeout(streamWelcome, 1000); // Delay before starting
+    }
+  }, [showWaitingGame]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
@@ -386,6 +442,75 @@ function App() {
         )}
       </div>
 
+      {/* Backend Wake-up Timer Overlay */}
+      {showWaitingGame && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pb-20 bg-black/10 backdrop-blur-[1px]">
+          <div className="bg-gradient-to-r from-slate-100/80 to-blue-100/70 backdrop-blur-sm text-gray-700 border border-slate-300/60 rounded-2xl shadow-lg p-4 max-w-sm mx-4">
+            <div className="flex items-start space-x-3">
+              {/* Profile Picture with Background Circle */}
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/30 to-cyan-400/30 rounded-full blur-sm animate-pulse"></div>
+                <div className="relative w-8 h-8 rounded-full flex-shrink-0 overflow-hidden border-2 border-white/50">
+                  <img
+                    src="/profile.png"
+                    alt="Aayushmaan Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Status Info */}
+              <div className="flex-1">
+                <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        backendStatus.status === "online"
+                          ? "bg-green-500 animate-pulse"
+                          : backendStatus.status === "offline"
+                          ? "bg-red-500"
+                          : "bg-yellow-500 animate-pulse"
+                      }`}
+                    ></div>
+                    <span className="font-medium">
+                      {backendStatus.status === "online"
+                        ? "Backend is up! 🎉"
+                        : backendStatus.status === "offline"
+                        ? "Waking up..."
+                        : "Checking..."}
+                    </span>
+                  </div>
+                  <div className="text-xs opacity-70">
+                    {backendStatus.status === "offline"
+                      ? `⏱️ ${waitTime}s - Render Free tier startup time`
+                      : "Ready to chat!"}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            {backendStatus.status === "offline" && (
+              <div className="mt-3">
+                <div className="w-full bg-gray-200/60 rounded-full h-1.5">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 h-1.5 rounded-full transition-all duration-1000"
+                    style={{
+                      width: `${Math.min((waitTime / 60) * 100, 100)}%`,
+                    }}
+                  ></div>
+                </div>
+                <div className="text-xs opacity-70 mt-1 text-center">
+                  {waitTime < 30
+                    ? "Almost there..."
+                    : "Taking longer than usual..."}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Messages Container with Footer - Combined Background */}
       <div className="flex-1 overflow-hidden flex bg-gradient-to-b from-white/90 via-blue-100/70 to-indigo-100/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto w-full flex flex-col px-2 sm:px-4">
@@ -519,11 +644,16 @@ function App() {
                   className="w-full bg-gradient-to-r from-slate-100/80 to-blue-100/70 text-gray-700 placeholder-gray-500 border border-slate-300/60 rounded-2xl px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 shadow-lg text-sm sm:text-base"
                   rows="1"
                   style={{ minHeight: "40px", maxHeight: "120px" }}
-                  disabled={showWelcome}
+                  disabled={showWelcome || showWaitingGame}
                 />
                 <button
                   onClick={handleSendMessage}
-                  disabled={!inputMessage.trim() || isLoading || showWelcome}
+                  disabled={
+                    !inputMessage.trim() ||
+                    isLoading ||
+                    showWelcome ||
+                    showWaitingGame
+                  }
                   className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white p-1.5 sm:p-2 rounded-full hover:shadow-md transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-500"
                 >
                   <svg

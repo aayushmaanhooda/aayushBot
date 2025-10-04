@@ -55,6 +55,10 @@ class ChatResponse(BaseModel):
 async def healthz():
     return {"status": "Server is running", "service": app_name}
 
+@app.post("/https://aayushbot-1.onrender.com")
+async def reload():
+    pass
+
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
