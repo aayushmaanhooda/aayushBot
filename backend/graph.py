@@ -16,20 +16,19 @@ from langchain_core.messages import HumanMessage
 from tools.web import web_search_tool
 from tools.rag import rag_tool
 from tools.prompt import system_prompt
-from tools.github_mcp import mcp_hub
+
+# MCP import moved to lazy initialization
 from langchain_core.tools import tool
 import asyncio
 
 load_dotenv()
 
 
-async def mcp():
-    tools, username = await mcp_hub()
-    return tools, username
+# Import MCP tools lazily to avoid event loop issues
+from tools.github_mcp import get_mcp_tools
 
-
-mcp_tools = asyncio.run(mcp())[0]
-username = asyncio.run(mcp())[1]
+# Initialize MCP tools
+mcp_tools, username = get_mcp_tools()
 
 
 # utility tools
@@ -148,17 +147,20 @@ memory = InMemorySaver()
 agent = graph.compile(checkpointer=memory)
 
 if __name__ == "__main__":
+
     async def test_agent():
         print("=== Testing Tool ===")
         out1 = await agent.ainvoke(
             {
                 "messages": [
                     system_prompt,
-                    HumanMessage(content="what are latest projects you are working on?"),
+                    HumanMessage(
+                        content="what are latest projects you are working on?"
+                    ),
                 ]
             },
             config={"configurable": {"thread_id": "test-thread-1"}},
         )
         print("Result:", out1["messages"][-1].content)
-    
+
     asyncio.run(test_agent())
