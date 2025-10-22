@@ -29,3 +29,7 @@ python-dotenv
 
 # --- Utilities ---
 requests
+
+# ----- Adding github mcp server to my agent -------
+mcp 
+langchain-mcp-adapters

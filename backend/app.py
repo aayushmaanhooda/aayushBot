@@ -43,7 +43,7 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     message: str
-    session_id: str = None 
+    session_id: str = None
 
 
 class ChatResponse(BaseModel):
@@ -55,15 +55,16 @@ class ChatResponse(BaseModel):
 async def healthz():
     return {"status": "Server is running", "service": app_name}
 
+
 @app.post("/https://aayushbot-1.onrender.com")
 async def reload():
     pass
 
 
 @app.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
+async def chat(request: ChatRequest):
     try:
-        #  compile the graph 
+        #  compile the graph
         agent = graph.compile(checkpointer=memory)
         # Generate or use existing session ID
         session_id = request.session_id or str(uuid.uuid4())
@@ -76,7 +77,7 @@ def chat(request: ChatRequest):
 
         # Invoke the agent with the message and session config
         # The checkpointer will automatically merge this with existing conversation history
-        result = agent.invoke({"messages": [human_message]}, config=config)
+        result = await agent.ainvoke({"messages": [human_message]}, config=config)
 
         # Extract the last message content as the response
         response_content = result["messages"][-1].content
